@@ -1,0 +1,132 @@
+generator client {
+  provider      = "prisma-client-js"
+  output        = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Chat {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  type        ChatType
+  displayName String?    @map("display_name")
+  avatarUrl   String?    @map("avatar_url")
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  message     Message[]
+  userChat    UserChat[]
+  Role        Role[]
+
+  @@map("chats")
+}
+
+model Media {
+  id       Int    @id @default(autoincrement())
+  mimetype String
+  height   Int?
+  width    Int?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  message     Message[]
+
+  @@map("media")
+}
+
+model Role {
+  id          Int              @id @default(autoincrement())
+  chatId      Int              @map("chat_id")
+  name        String
+  createdAt   DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  chat        Chat             @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  users       UserChat[]
+  permissions RolePermission[]
+
+  @@unique([chatId, name])
+  @@map("roles")
+}
+
+model Permission {
+  id    Int              @id @default(autoincrement())
+  name  String           @unique
+  roles RolePermission[]
+
+  @@map("permissions")
+}
+
+model RolePermission {
+  roleId       Int        @map("role_id")
+  permissionId Int        @map("permission_id")
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("roles_permissions")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  chatId    Int      @map("chat_id")
+  userId    Int      @map("user_id")
+  isText    Boolean  @map("is_text")
+  mediaId   Int?     @map("media_id")
+  content   String?
+  isEdited  Boolean? @default(false) @map("is_edited")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media     Media?   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@index([chatId, userId], map: "idx_messages_chat_user")
+  @@index([chatId, createdAt], map: "idx_messages_chat_created_at")
+  @@map("messages")
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  username     String     @unique
+  displayName  String?    @map("display_name")
+  email        String?    @unique
+  passwordHash String     @map("password_hash")
+  avatarUrl    String?    @map("avatar_url")
+  status       String?    @default("offline")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  message      Message[]
+  userChat     UserChat[]
+
+  @@map("users")
+}
+
+model UserChat {
+  chatId    Int      @map("chat_id")
+  userId    Int      @map("user_id")
+  roleId    Int?     @map("role_id")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  chat Chat  @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role? @relation(fields: [roleId], references: [id], onDelete: SetNull)
+
+  @@id([userId, chatId])
+  @@map("users_chats")
+}
+
+enum ChatRole {
+  user
+  admin
+
+  @@map("chat_role")
+}
+
+enum ChatType {
+  private
+  group
+
+  @@map("chat_type")
+}
