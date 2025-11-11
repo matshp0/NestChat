@@ -212,16 +212,4 @@ export class MessageRepository {
     });
     return getSignedUrl(this.s3Service, command, { expiresIn: 3600 });
   }
-
-  getMediaStorage() {
-    return multerS3({
-      s3: this.s3Service,
-      bucket: this.s3Service.mediaBucket,
-      cacheControl: 'public, max-age=31536000, immutable',
-      contentType: (req, file, cb) => multerS3.AUTO_CONTENT_TYPE(req, file, cb),
-      key: function (req, file, cb) {
-        cb(null, randomUUID());
-      },
-    });
-  }
 }
