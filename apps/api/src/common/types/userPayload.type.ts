@@ -1,5 +1,3 @@
-import { FastifyRequest } from 'fastify';
-
 export interface UserPayload {
   id: number;
 }

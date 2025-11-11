@@ -10,8 +10,6 @@ import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Upload } from '@aws-sdk/lib-storage';
-import * as multerS3 from 'multer-s3';
-import { randomUUID } from 'crypto';
 
 export type MessageWithUser = Prisma.MessageGetPayload<{
   include: {
