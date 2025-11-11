@@ -10,14 +10,14 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/createUser.dto';
-import { FileFastifyInterceptor } from 'fastify-file-interceptor';
-import { mimetypeFilter } from 'src/common/helpers/files/fileFilter';
 import { Public } from 'src/common/decorators/public';
-import { MulterFile } from 'src/common/decorators/multerFile';
 import { UserId } from 'src/common/decorators/userId';
 import { ChatDto } from '../chat/dto/chat.dto';
 import { PrivateUserDto } from './dto/privateUser.dto';
 import { PublicUserDto } from './dto/publicUser.dto';
+import { UploadedFile } from 'src/common/decorators/uploadedFile';
+import { MultipartInterceptor } from 'src/common/interceptors/multipart.interceptor';
+import { MultipartFile } from '@fastify/multipart';
 
 @Controller('/users')
 export class UserController {
@@ -45,17 +45,10 @@ export class UserController {
   }
 
   @Post('/:id/avatar')
-  @UseInterceptors(
-    FileFastifyInterceptor('avatar', {
-      fileFilter: mimetypeFilter(['image/jpeg']),
-      limits: {
-        fileSize: 1024 * 1024 * 5,
-      },
-    }),
-  )
+  @UseInterceptors(MultipartInterceptor())
   uploadAvatar(
     @Param('id', ParseIntPipe) id: number,
-    @MulterFile() file?: Express.Multer.File,
+    @UploadedFile() file: MultipartFile,
   ): Promise<PrivateUserDto> {
     return this.userService.uploadAvatar(id, file);
   }

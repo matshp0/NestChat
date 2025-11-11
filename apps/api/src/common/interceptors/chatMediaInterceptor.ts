@@ -18,7 +18,7 @@ export class ChatMediaInterceptor implements NestInterceptor {
         fileSize: 1024 * 1024 * 100,
         files: 1,
       },
-      storage: this.messageRepository.getStorage(),
+      storage: this.messageRepository.getMediaStorage(),
     });
     this.fileInterceptor = new getIntreceptor();
   }

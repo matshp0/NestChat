@@ -13,12 +13,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { mimetypeFilter } from 'src/common/helpers/files/fileFilter';
-import { FileFastifyInterceptor } from 'fastify-file-interceptor';
-import { ChatMediaInterceptor } from 'src/common/interceptors/chatMediaInterceptor';
-import { MulterS3File } from 'src/common/types/multerS3File.type';
 import { UserId } from 'src/common/decorators/userId';
-import { MulterFile } from 'src/common/decorators/multerFile';
 import { CreateChatDto } from './dto/createChat.dto';
 import { CreateMessageDto } from './dto/createMessage.dto';
 import { ChangeMessageDto } from './dto/changeMessage.dto';
@@ -30,6 +25,9 @@ import { AssignRoleDto } from './dto/assignRole.dto';
 import { RoleDto } from './dto/role.dto';
 import { ChatUserDto } from './dto/ChatUser.dto';
 import { ChatDto } from './dto/chat.dto';
+import { MultipartInterceptor } from 'src/common/interceptors/multipart.interceptor';
+import { MultipartFile } from '@fastify/multipart';
+import { UploadedFile } from 'src/common/decorators/uploadedFile';
 
 @UseGuards(PermissionGuard)
 @Controller('/chats')
@@ -55,20 +53,12 @@ export class ChatController {
   }
 
   @Post('/:chatId/avatar')
-  @UseInterceptors(
-    FileFastifyInterceptor('avatar', {
-      fileFilter: mimetypeFilter(['image/jpeg']),
-      limits: {
-        fileSize: 1024 * 1024 * 5,
-        files: 1,
-      },
-    }),
-  )
+  @UseInterceptors(MultipartInterceptor())
   uploadAvatar(
     @Param('chatId', ParseIntPipe) id: number,
-    @MulterFile() avatar?: Express.Multer.File,
+    @UploadedFile() file: MultipartFile,
   ): Promise<ChatDto> {
-    return this.chatService.uploadAvatar(id, avatar);
+    return this.chatService.uploadAvatar(id, file);
   }
 
   @Get('/:chatId/messages')
@@ -79,14 +69,14 @@ export class ChatController {
     return this.chatService.getMessageFromChat(id, dto);
   }
 
+  @UseInterceptors(MultipartInterceptor())
   @Post('/:chatId/messages/media')
-  @UseInterceptors(ChatMediaInterceptor)
   async createMediaMessage(
     @UserId() userId: number,
     @Param('chatId', ParseIntPipe) chatId: number,
-    @MulterFile() media?: MulterS3File,
+    @UploadedFile() file: MultipartFile,
   ): Promise<MessageDto> {
-    return this.chatService.createMediaMessage(userId, chatId, media);
+    return this.chatService.createMediaMessage(userId, chatId, file);
   }
 
   @Post('/:chatId/messages/text')

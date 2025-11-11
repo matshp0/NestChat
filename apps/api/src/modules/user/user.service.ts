@@ -13,6 +13,7 @@ import { plainToInstance } from 'class-transformer';
 import { PrivateUserDto } from './dto/privateUser.dto';
 import { ChatMapper } from 'src/data/mappers/chat.mapper';
 import { ChatDto } from '../chat/dto/chat.dto';
+import { MultipartFile } from '@fastify/multipart';
 
 @Injectable()
 export class UserService {
@@ -55,12 +56,9 @@ export class UserService {
     return plainToInstance(PrivateUserDto, user);
   }
 
-  async uploadAvatar(
-    id: number,
-    avatar?: Express.Multer.File,
-  ): Promise<PrivateUserDto> {
-    if (!avatar) throw new BadRequestException('No file uploaded');
-    const { buffer, mimetype } = avatar;
+  async uploadAvatar(id: number, file: MultipartFile): Promise<PrivateUserDto> {
+    const { mimetype } = file;
+    const buffer = await file.toBuffer();
     const user = await this.userRepository.findById(id);
     if (!user) throw new NotFoundException('User not found');
     const isValid = await validateAvatar(buffer);

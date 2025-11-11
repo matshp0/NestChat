@@ -10,7 +10,6 @@ import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Upload } from '@aws-sdk/lib-storage';
-import { StorageEngine } from 'multer';
 import * as multerS3 from 'multer-s3';
 import { randomUUID } from 'crypto';
 
@@ -47,6 +46,12 @@ export class MessageRepository {
           },
         },
       },
+    });
+  }
+
+  async createMedia(data: Prisma.MediaCreateInput) {
+    return await this.prismaService.media.create({
+      data,
     });
   }
 
@@ -208,18 +213,15 @@ export class MessageRepository {
     return getSignedUrl(this.s3Service, command, { expiresIn: 3600 });
   }
 
-  getStorage() {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+  getMediaStorage() {
     return multerS3({
       s3: this.s3Service,
       bucket: this.s3Service.mediaBucket,
       cacheControl: 'public, max-age=31536000, immutable',
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-      contentType: multerS3.AUTO_CONTENT_TYPE,
+      contentType: (req, file, cb) => multerS3.AUTO_CONTENT_TYPE(req, file, cb),
       key: function (req, file, cb) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         cb(null, randomUUID());
       },
-    }) as unknown as StorageEngine;
+    });
   }
 }

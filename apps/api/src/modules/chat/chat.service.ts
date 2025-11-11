@@ -5,11 +5,10 @@ import {
 } from '@nestjs/common';
 import { ChatRepository } from 'src/data/repositories/chat.repository';
 import { validateAvatar } from 'src/common/helpers/files/validateAvatar';
-import { createHash } from 'crypto';
+import { createHash, randomUUID } from 'crypto';
 import { MessageRepository } from 'src/data/repositories/message.repository';
 import { UserRepository } from 'src/data/repositories/user.repository';
 import { MessageMapper } from 'src/data/mappers/message.mapper';
-import { MulterS3File } from 'src/common/types/multerS3File.type';
 import { CreateMessageDto } from './dto/createMessage.dto';
 import { CreateChatDto } from './dto/createChat.dto';
 import { ChangeMessageDto } from './dto/changeMessage.dto';
@@ -28,6 +27,8 @@ import { ChatUserDto } from './dto/ChatUser.dto';
 import { ChatDto } from './dto/chat.dto';
 import { RoleDto } from './dto/role.dto';
 import { MessageDto } from './dto/message.dto';
+import { MultipartFile } from '@fastify/multipart';
+import * as sharp from 'sharp';
 
 @Injectable()
 export class ChatService {
@@ -71,12 +72,9 @@ export class ChatService {
     return plainToInstance(ChatDto, chat, { excludeExtraneousValues: true });
   }
 
-  async uploadAvatar(
-    chatId: number,
-    avatar?: Express.Multer.File,
-  ): Promise<ChatDto> {
-    if (!avatar) throw new BadRequestException('No file uploaded');
-    const { buffer, mimetype } = avatar;
+  async uploadAvatar(chatId: number, file: MultipartFile): Promise<ChatDto> {
+    const { mimetype } = file;
+    const buffer = await file.toBuffer();
     const chat = await this.chatRepository.findById(chatId);
     if (!chat) throw new NotFoundException('Chat not found');
     const isValid = await validateAvatar(buffer);
@@ -92,20 +90,37 @@ export class ChatService {
   async createMediaMessage(
     userId: number,
     chatId: number,
-    media?: MulterS3File,
+    file: MultipartFile,
   ): Promise<MessageDto> {
-    if (!media) throw new BadRequestException('File expected');
     const [chatRecord, userRecord] = await Promise.all([
       this.chatRepository.findById(chatId),
       this.userRepository.findById(userId),
     ]);
     if (!chatRecord) throw new NotFoundException(`Chat not found`);
     if (!userRecord) throw new NotFoundException('User not found');
+    const { file: imageStream } = file;
+    const key = randomUUID();
+    const sharpInstance = sharp({ animated: true });
+    imageStream.pipe(sharpInstance);
+    const metadataPromise = sharpInstance.clone().metadata();
+    const webpStream = sharpInstance.clone().webp({ quality: 80 });
+    const uploadPromise = this.messageRepository.uploadMedia(
+      webpStream,
+      key,
+      'image/webp',
+    );
+    const [metadata] = await Promise.all([metadataPromise, uploadPromise]);
+    await this.messageRepository.createMedia({
+      id: key,
+      width: metadata.width,
+      height: metadata.height,
+      mimetype: 'image/webp',
+    });
     const message = await this.messageRepository.create({
-      chatId,
-      userId,
+      chatId: chatId,
+      userId: userId,
       isText: false,
-      s3Id: media.key,
+      mediaId: key,
     });
     return this.messageMapper.toMessage(message);
   }

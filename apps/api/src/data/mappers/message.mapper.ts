@@ -27,8 +27,8 @@ export class MessageMapper {
       excludeExtraneousValues: true,
     });
     dto.user.role = entity.user.userChat[0].role!.name;
-    dto.mediaUrl = entity.s3Id
-      ? await this.messageRepository.getPreSignedUrl(entity.s3Id)
+    dto.mediaUrl = entity.mediaId
+      ? await this.messageRepository.getPreSignedUrl(entity.mediaId)
       : null;
 
     return dto;

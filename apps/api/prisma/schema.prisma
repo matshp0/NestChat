@@ -1,6 +1,6 @@
 generator client {
-  provider      = "prisma-client-js"
-  output        = "./generated"
+  provider = "prisma-client-js"
+  output   = "./generated"
 }
 
 datasource db {
@@ -24,13 +24,13 @@ model Chat {
 }
 
 model Media {
-  id       Int    @id @default(autoincrement())
-  mimetype String
-  height   Int?
-  width    Int?
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  message     Message[]
+  id        String    @id @default(uuid())
+  mimetype  String
+  height    Int?
+  width     Int?
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  message   Message[]
 
   @@map("media")
 }
@@ -72,7 +72,7 @@ model Message {
   chatId    Int      @map("chat_id")
   userId    Int      @map("user_id")
   isText    Boolean  @map("is_text")
-  mediaId   Int?     @map("media_id")
+  mediaId   String?  @map("media_id")
   content   String?
   isEdited  Boolean? @default(false) @map("is_edited")
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)

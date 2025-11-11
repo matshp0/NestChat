@@ -7,7 +7,7 @@ import {
 } from '@nestjs/platform-fastify';
 import fastifyCookie from '@fastify/cookie';
 import helmet from '@fastify/helmet';
-import * as multipart from '@fastify/multipart';
+import multipart from '@fastify/multipart';
 
 export async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
