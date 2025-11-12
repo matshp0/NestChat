@@ -4,9 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma';
-import { CHAT_PERMISSIONS } from 'src/common/enums/persmissions.enum';
 import { PermissionRepository } from './permission.repository';
 import { Prisma } from 'prisma/generated';
+import { CHAT_PERMISSIONS } from '@repo/utils/db';
 
 export type RolesWithPermissions = Prisma.RoleGetPayload<{
   include: { permissions: { include: { permission: true } } };

@@ -3,8 +3,8 @@ import {
   MessageRepository,
   MessageWithUser,
 } from '../repositories/message.repository';
-import { MessageDto } from 'src/modules/chat/dto/message.dto';
 import { plainToInstance } from 'class-transformer';
+import { MessageDto } from '@repo/utils/response';
 
 @Injectable()
 export class MessageMapper {

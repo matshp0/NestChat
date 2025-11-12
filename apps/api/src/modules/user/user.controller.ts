@@ -9,15 +9,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/createUser.dto';
 import { Public } from 'src/common/decorators/public';
 import { UserId } from 'src/common/decorators/userId';
-import { ChatDto } from '../chat/dto/chat.dto';
-import { PrivateUserDto } from './dto/privateUser.dto';
-import { PublicUserDto } from './dto/publicUser.dto';
 import { UploadedFile } from 'src/common/decorators/uploadedFile';
 import { MultipartInterceptor } from 'src/common/interceptors/multipart.interceptor';
 import { MultipartFile } from '@fastify/multipart';
+import { ChatDto, PrivateUserDto, PublicUserDto } from '@repo/utils/response';
+import { CreateUserDto } from '@repo/utils/request';
 
 @Controller('/users')
 export class UserController {

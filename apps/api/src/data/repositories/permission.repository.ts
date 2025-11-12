@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma';
-import { CHAT_PERMISSIONS } from 'src/common/enums/persmissions.enum';
+import { CHAT_PERMISSIONS } from '@repo/utils/db';
 
 const isChatPermission = (value: string): value is CHAT_PERMISSIONS => {
   return Object.values(CHAT_PERMISSIONS).includes(value as CHAT_PERMISSIONS);

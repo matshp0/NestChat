@@ -14,20 +14,24 @@ import {
 } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { UserId } from 'src/common/decorators/userId';
-import { CreateChatDto } from './dto/createChat.dto';
-import { CreateMessageDto } from './dto/createMessage.dto';
-import { ChangeMessageDto } from './dto/changeMessage.dto';
-import { MessageDto } from './dto/message.dto';
-import { PaginatedMessageQueryDto } from './dto/paginatedMessagesQuery.dto';
 import { PermissionGuard } from '../../common/guards/permission.guard';
-import { CreateRoleDto } from './dto/createRole.dto';
-import { AssignRoleDto } from './dto/assignRole.dto';
-import { RoleDto } from './dto/role.dto';
-import { ChatUserDto } from './dto/ChatUser.dto';
-import { ChatDto } from './dto/chat.dto';
 import { MultipartInterceptor } from 'src/common/interceptors/multipart.interceptor';
 import { MultipartFile } from '@fastify/multipart';
 import { UploadedFile } from 'src/common/decorators/uploadedFile';
+import {
+  CreateChatDto,
+  PaginatedMessageQueryDto,
+  CreateMessageDto,
+  ChangeMessageDto,
+  CreateRoleDto,
+  AssignRoleDto,
+} from '@repo/utils/request';
+import {
+  ChatDto,
+  ChatUserDto,
+  MessageDto,
+  RoleDto,
+} from '@repo/utils/response';
 
 @UseGuards(PermissionGuard)
 @Controller('/chats')

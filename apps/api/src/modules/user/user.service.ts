@@ -4,16 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserRepository } from 'src/data/repositories/user.repository';
-import { CreateUserDto } from './dto/createUser.dto';
 import { hash } from 'bcrypt';
 import { createHash } from 'crypto';
 import { validateAvatar } from 'src/common/helpers/files/validateAvatar';
-import { PublicUserDto } from './dto/publicUser.dto';
 import { plainToInstance } from 'class-transformer';
-import { PrivateUserDto } from './dto/privateUser.dto';
 import { ChatMapper } from 'src/data/mappers/chat.mapper';
-import { ChatDto } from '../chat/dto/chat.dto';
 import { MultipartFile } from '@fastify/multipart';
+import { ChatDto, PrivateUserDto, PublicUserDto } from '@repo/utils/response';
+import { CreateUserDto } from '@repo/utils/request';
 
 @Injectable()
 export class UserService {

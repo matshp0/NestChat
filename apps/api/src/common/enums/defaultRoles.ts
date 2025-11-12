@@ -1,9 +1,4 @@
-import { CHAT_PERMISSIONS } from './persmissions.enum';
-
-export enum DEFAULT_ROLES {
-  OWNER = 'owner',
-  USER = 'user',
-}
+import { CHAT_PERMISSIONS, DEFAULT_ROLES } from '@repo/utils/db';
 
 export const DEFAULT_ROLES_PERMISSIONS: Record<
   DEFAULT_ROLES,

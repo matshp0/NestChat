@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { ChatDto } from 'src/modules/chat/dto/chat.dto';
 import { UserChats } from '../repositories/user.repository';
 import { ChatUserWithRole } from '../repositories/chat.repository';
-import { ChatUserDto } from 'src/modules/chat/dto/ChatUser.dto';
+import { ChatDto, ChatUserDto } from '@repo/utils/response';
 
 @Injectable()
 export class ChatMapper {

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MessageRepository } from 'src/data/repositories/message.repository';
-import { MessageDto } from '../chat/dto/message.dto';
 import { plainToInstance } from 'class-transformer';
+import { MessageDto } from '@repo/utils/response';
 
 @Injectable()
 export class MessageService {

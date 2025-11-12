@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserRepository } from 'src/data/repositories/user.repository';
-import { LoginDto } from './dto/login.dto';
 import { compare } from 'bcrypt';
 import { RefreshToken } from './types/refresh.token';
 import { User } from 'prisma/generated';
 import { AccessToken } from './types/accessToken.type';
 import { ConfigService } from '@nestjs/config';
+import { LoginDto } from '@repo/utils/request';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +22,7 @@ export class AuthService {
   ) {}
 
   async login(payload: LoginDto) {
-    const user = await this.userRepository.findByEmail(payload.login);
+    const user = await this.userRepository.findByEmail(payload.email);
     if (!user) throw new NotFoundException('User not found');
     const isCorrect = await compare(payload.password, user.passwordHash);
     if (!isCorrect) throw new UnauthorizedException('Wrong email or password');

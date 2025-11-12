@@ -9,26 +9,28 @@ import { createHash, randomUUID } from 'crypto';
 import { MessageRepository } from 'src/data/repositories/message.repository';
 import { UserRepository } from 'src/data/repositories/user.repository';
 import { MessageMapper } from 'src/data/mappers/message.mapper';
-import { CreateMessageDto } from './dto/createMessage.dto';
-import { CreateChatDto } from './dto/createChat.dto';
-import { ChangeMessageDto } from './dto/changeMessage.dto';
-import { PaginatedMessageQueryDto } from './dto/paginatedMessagesQuery.dto';
-import { CreateRoleDto } from './dto/createRole.dto';
 import { RoleRepository } from 'src/data/repositories/role.repository';
-import { AssignRoleDto } from './dto/assignRole.dto';
-import {
-  DEFAULT_ROLES,
-  DEFAULT_ROLES_PERMISSIONS,
-} from 'src/common/enums/defaultRoles';
 import { ChatMapper } from 'src/data/mappers/chat.mapper';
 import { RoleMapper } from 'src/data/mappers/role.mapper';
 import { plainToInstance } from 'class-transformer';
-import { ChatUserDto } from './dto/ChatUser.dto';
-import { ChatDto } from './dto/chat.dto';
-import { RoleDto } from './dto/role.dto';
-import { MessageDto } from './dto/message.dto';
 import { MultipartFile } from '@fastify/multipart';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
+import { DEFAULT_ROLES_PERMISSIONS } from 'src/common/enums/defaultRoles';
+import { DEFAULT_ROLES } from '@repo/utils/db';
+import {
+  ChatDto,
+  ChatUserDto,
+  MessageDto,
+  RoleDto,
+} from '@repo/utils/response';
+import {
+  AssignRoleDto,
+  ChangeMessageDto,
+  CreateChatDto,
+  CreateMessageDto,
+  CreateRoleDto,
+  PaginatedMessageQueryDto,
+} from '@repo/utils/request';
 
 @Injectable()
 export class ChatService {

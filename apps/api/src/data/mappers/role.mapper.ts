@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
 import { RolesWithPermissions } from '../repositories/role.repository';
-import { RoleDto } from 'src/modules/chat/dto/role.dto';
-import { CHAT_PERMISSIONS } from 'src/common/enums/persmissions.enum';
+import { plainToInstance } from 'class-transformer';
+import { RoleDto } from '@repo/utils/response';
+import { CHAT_PERMISSIONS } from '@repo/utils/db';
 
 @Injectable()
 export class RoleMapper {
