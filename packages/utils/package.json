@@ -17,17 +17,23 @@
     "access": "public"
   },
   "exports": {
-    ".": {
-      "import": "./dist/entry.js",
-      "require": "./dist/entry.js"
+    "./request": {
+      "import": "./dist/request/index.js",
+      "require": "./dist/request/index.js"
     },
-    "./*": {
-      "import": "./dist/*.js",
-      "require": "./dist/*.js"
+    "./response": {
+      "import": "./dist/response/index.js",
+      "require": "./dist/response/index.js"
+    },
+    "./db": {
+      "import": "./dist/db/index.js",
+      "require": "./dist/db/index.js"
     }
   },
   "dependencies": {
-    "@nestjs/mapped-types": "*"
+    "@nestjs/mapped-types": "*",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2"
   },
   "devDependencies": {
     "@types/node": "^22.10.7",
