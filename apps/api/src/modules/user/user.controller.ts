@@ -45,7 +45,7 @@ export class UserController {
   }
 
   @Post('/:id/avatar')
-  @UseInterceptors(MultipartInterceptor())
+  @UseInterceptors(MultipartInterceptor({ fileSize: 2_000_000 }))
   uploadAvatar(
     @Param('id', ParseIntPipe) id: number,
     @UploadedFile() file: MultipartFile,

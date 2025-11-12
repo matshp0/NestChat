@@ -7,13 +7,12 @@ import {
   NestInterceptor,
   Type,
 } from '@nestjs/common';
-import { FastifyRequest } from 'fastify';
+import { FastifyRequest, FastifyReply } from 'fastify';
 
-export class MultipartOptions {
-  constructor(
-    public maxFileSize?: number,
-    public fileType?: string | RegExp,
-  ) {}
+const DEFAULT_FILE_SIZE = 1000_000;
+
+interface MultipartOptions {
+  fileSize?: number;
 }
 
 export function MultipartInterceptor(
@@ -25,21 +24,30 @@ export function MultipartInterceptor(
       next: CallHandler,
     ): Promise<Observable<any>> {
       const req = context.switchToHttp().getRequest<FastifyRequest>();
+      const res = context.switchToHttp().getResponse<FastifyReply>();
       if (!req.isMultipart())
         throw new BadRequestException('Multipart data is expected');
 
-      const parts = req.parts();
-      for await (const part of parts) {
-        if (part.type !== 'file') continue;
-        req.streamFile = part;
-        break;
+      const file = await req.file({
+        throwFileSizeLimit: true,
+        limits: {
+          fileSize: options.fileSize ?? DEFAULT_FILE_SIZE,
+        },
+      });
+      if (!file) {
+        throw new BadRequestException('File is required');
       }
-
-      if (!req.streamFile) throw new BadRequestException('File is expected');
-
+      const stream = file.file;
+      stream.on('limit', () => {
+        res.status(413).send({
+          statusCode: 413,
+          message: 'File size limit exceeded',
+        });
+        stream.destroy();
+      });
+      req.streamFile = file;
       return next.handle();
     }
   }
-
   return mixin(MixinInterceptor);
 }

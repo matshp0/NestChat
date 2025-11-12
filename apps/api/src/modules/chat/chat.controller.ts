@@ -53,7 +53,7 @@ export class ChatController {
   }
 
   @Post('/:chatId/avatar')
-  @UseInterceptors(MultipartInterceptor())
+  @UseInterceptors(MultipartInterceptor({ fileSize: 2_000_000 }))
   uploadAvatar(
     @Param('chatId', ParseIntPipe) id: number,
     @UploadedFile() file: MultipartFile,
@@ -69,7 +69,7 @@ export class ChatController {
     return this.chatService.getMessageFromChat(id, dto);
   }
 
-  @UseInterceptors(MultipartInterceptor())
+  @UseInterceptors(MultipartInterceptor({ fileSize: 10_000_000 }))
   @Post('/:chatId/messages/media')
   async createMediaMessage(
     @UserId() userId: number,
