@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model Chat {
@@ -81,23 +80,26 @@ model Message {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   media     Media?   @relation(fields: [mediaId], references: [id], onDelete: Cascade)
 
+  reactions MessageReaction[]
+
   @@index([chatId, userId], map: "idx_messages_chat_user")
   @@index([chatId, createdAt], map: "idx_messages_chat_created_at")
   @@map("messages")
 }
 
 model User {
-  id           Int        @id @default(autoincrement())
-  username     String     @unique
-  displayName  String?    @map("display_name")
-  email        String?    @unique
-  passwordHash String     @map("password_hash")
-  avatarUrl    String?    @map("avatar_url")
-  status       String?    @default("offline")
-  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt    DateTime   @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
-  message      Message[]
-  userChat     UserChat[]
+  id               Int               @id @default(autoincrement())
+  username         String            @unique
+  displayName      String?           @map("display_name")
+  email            String?           @unique
+  passwordHash     String            @map("password_hash")
+  avatarUrl        String?           @map("avatar_url")
+  status           String?           @default("offline")
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  message          Message[]
+  userChat         UserChat[]
+  messageReactions MessageReaction[]
 
   @@map("users")
 }
@@ -115,6 +117,19 @@ model UserChat {
 
   @@id([userId, chatId])
   @@map("users_chats")
+}
+
+model MessageReaction {
+  messageId Int      @map("message_id")
+  userId    Int      @map("user_id")
+  code      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([messageId, userId, code])
+  @@map("message_reactions")
 }
 
 enum ChatRole {
