@@ -186,6 +186,9 @@ export class ChatService {
 
   async createRole(chatId: number, dto: CreateRoleDto): Promise<RoleDto> {
     const { permissions, name } = dto;
+    const existingRoles = await this.roleRepository.findByChatId(chatId);
+    if (existingRoles.some((role) => role.name === name))
+      throw new BadRequestException(`Role with name: ${name} already exists`);
     const role = await this.roleRepository.createWithPermissions(
       chatId,
       permissions,

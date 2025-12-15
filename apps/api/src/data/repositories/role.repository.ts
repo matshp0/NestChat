@@ -25,37 +25,24 @@ export class RoleRepository {
     name: string,
   ) {
     return await this.prismaService.$transaction(async (tx) => {
-      try {
-        const role = await tx.role.create({
-          data: {
-            chatId,
-            name,
-          },
-        });
-        await tx.rolePermission.createMany({
-          data: permissions.map((permission) => ({
-            roleId: role.id,
-            permissionId: this.permissionRepository.getId(permission),
-          })),
-        });
-        const roles = await tx.role.findUnique({
-          where: { id: role.id },
-          include: { permissions: { include: { permission: true } } },
-        });
+      const role = await tx.role.create({
+        data: {
+          chatId,
+          name,
+        },
+      });
+      await tx.rolePermission.createMany({
+        data: permissions.map((permission) => ({
+          roleId: role.id,
+          permissionId: this.permissionRepository.getId(permission),
+        })),
+      });
+      const roles = await tx.role.findUnique({
+        where: { id: role.id },
+        include: { permissions: { include: { permission: true } } },
+      });
 
-        return roles!;
-      } catch (err) {
-        if (
-          err instanceof Prisma.PrismaClientKnownRequestError &&
-          err.code === 'P2002'
-        ) {
-          const repeatedField = err.meta?.target as string[];
-          throw new BadRequestException(
-            `Role with this ${repeatedField.toString()} already exists`,
-          );
-        }
-        throw err;
-      }
+      return roles!;
     });
   }
 
