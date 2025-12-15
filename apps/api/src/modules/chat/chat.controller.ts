@@ -105,7 +105,7 @@ export class ChatController {
     return this.chatService.deleteMessage(messageId);
   }
 
-  @Post('/:chatId/role')
+  @Post('/:chatId/roles')
   createRole(
     @Param('chatId', ParseIntPipe) chatId: number,
     @Body() dto: CreateRoleDto,
