@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsc -b --watch",
     "build": "tsc -b -v",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\""
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "main": "./dist/entry.js",
   "types": "./dist/entry.d.ts",
