@@ -16,7 +16,7 @@ import { ChatService } from './chat.service';
 import { UserId } from 'src/common/decorators/userId';
 import { PermissionGuard } from '../../common/guards/permission.guard';
 import { MultipartInterceptor } from 'src/common/interceptors/multipart.interceptor';
-import { MultipartFile } from '@fastify/multipart';
+import { type MultipartFile } from '@fastify/multipart';
 import { UploadedFile } from 'src/common/decorators/uploadedFile';
 import {
   CreateChatDto,

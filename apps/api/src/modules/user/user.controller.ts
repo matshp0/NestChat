@@ -13,7 +13,7 @@ import { Public } from 'src/common/decorators/public';
 import { UserId } from 'src/common/decorators/userId';
 import { UploadedFile } from 'src/common/decorators/uploadedFile';
 import { MultipartInterceptor } from 'src/common/interceptors/multipart.interceptor';
-import { MultipartFile } from '@fastify/multipart';
+import { type MultipartFile } from '@fastify/multipart';
 import { ChatDto, PrivateUserDto, PublicUserDto } from '@repo/utils/response';
 import { CreateUserDto } from '@repo/utils/request';
 

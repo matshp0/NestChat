@@ -1,13 +1,13 @@
-import { Observable } from 'rxjs';
+import { type Observable } from 'rxjs';
 import {
   BadRequestException,
-  CallHandler,
-  ExecutionContext,
+  type CallHandler,
+  type ExecutionContext,
   mixin,
-  NestInterceptor,
-  Type,
+  type NestInterceptor,
+  type Type,
 } from '@nestjs/common';
-import { FastifyRequest, FastifyReply } from 'fastify';
+import { type FastifyRequest, type FastifyReply } from 'fastify';
 
 const DEFAULT_FILE_SIZE = 1000_000;
 

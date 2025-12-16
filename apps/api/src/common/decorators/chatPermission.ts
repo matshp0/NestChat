@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { CHAT_PERMISSIONS } from '@repo/utils/db';
+import { type CHAT_PERMISSIONS } from '@repo/utils/db';
 
 export const CHAT_PERMISSION_KEY = 'chatPermission';
 export const ChatPermission = (permission: CHAT_PERMISSIONS) =>

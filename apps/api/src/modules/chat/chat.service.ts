@@ -13,7 +13,7 @@ import { RoleRepository } from 'src/data/repositories/role.repository';
 import { ChatMapper } from 'src/data/mappers/chat.mapper';
 import { RoleMapper } from 'src/data/mappers/role.mapper';
 import { plainToInstance } from 'class-transformer';
-import { MultipartFile } from '@fastify/multipart';
+import { type MultipartFile } from '@fastify/multipart';
 import sharp from 'sharp';
 import { DEFAULT_ROLES_PERMISSIONS } from 'src/common/enums/defaultRoles';
 import { DEFAULT_ROLES } from '@repo/utils/db';

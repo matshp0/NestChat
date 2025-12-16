@@ -9,7 +9,7 @@ import { createHash } from 'crypto';
 import { validateAvatar } from 'src/common/helpers/files/validateAvatar';
 import { plainToInstance } from 'class-transformer';
 import { ChatMapper } from 'src/data/mappers/chat.mapper';
-import { MultipartFile } from '@fastify/multipart';
+import { type MultipartFile } from '@fastify/multipart';
 import { ChatDto, PrivateUserDto, PublicUserDto } from '@repo/utils/response';
 import { CreateUserDto } from '@repo/utils/request';
 
