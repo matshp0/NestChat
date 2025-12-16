@@ -8,14 +8,14 @@ import { CHAT_PERMISSIONS } from '@repo/utils/db';
 export class RoleMapper {
   constructor() {}
 
-  async toRole(obj: RolesWithPermissions): Promise<RoleDto>;
-  async toRole(obj: RolesWithPermissions[]): Promise<RoleDto[]>;
+  toRole(obj: RolesWithPermissions): RoleDto;
+  toRole(obj: RolesWithPermissions[]): RoleDto[];
 
-  async toRole(
+  toRole(
     obj: RolesWithPermissions | RolesWithPermissions[],
-  ): Promise<RoleDto | RoleDto[]> {
+  ): RoleDto | RoleDto[] {
     if (Array.isArray(obj)) {
-      return Promise.all(obj.map((item) => this.mapOne(item)));
+      return obj.map((item) => this.mapOne(item));
     }
     return this.mapOne(obj);
   }
