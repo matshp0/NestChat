@@ -86,17 +86,26 @@ Create a `.env` file in the root or specifically for the backend (depending on y
 Code snippet
 
 ```
-# Database
-DATABASE_URL="postgresql://user:password@localhost:5432/chat_db"
+# Server Configuration
+PORT=3000
 
-# AWS S3 / MinIO
-AWS_ACCESS_KEY_ID=your_access_key
-AWS_SECRET_ACCESS_KEY=your_secret_key
-AWS_REGION=us-east-1
-AWS_BUCKET_NAME=chat-media
+# Database (PostgreSQL)
+# Connection string format: postgresql://USER:PASSWORD@HOST:PORT/DATABASE?sslmode=require
+DATABASE_URL="postgresql://postgres:password@localhost:5432/mydb"
 
-# Auth
-JWT_SECRET=your_super_secret_jwt_key
+# JWT Authentication
+JWT_SECRET="your_secure_random_string_here"
+JWT_TTL=900000000
+JWT_REFRES_TTL=604800000
+
+# AWS S3
+AWS_ACCESS_KEY_ID="your_aws_access_key"
+AWS_SECRET_ACCESS_KEY="your_aws_secret_key"
+AWS_REGION=
+
+# Bucket Names
+AWS_AVATAR_BUCKET=
+AWS_MEDIA_BUCKET=
 
 ```
 
