@@ -1,0 +1,23 @@
+name: Manual deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - prod
+      docker_compose_file:
+        description: "Docker compose file"
+        required: true
+        default: docker-compose.prod.yml
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/reusable-deploy.yml
+    with:
+      environment: ${{ inputs.environment }}
+      docker_compose_file: ${{ inputs.docker_compose_file }}
+    secrets: inherit
