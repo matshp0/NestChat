@@ -77,7 +77,6 @@ Bash
 ```
 git clone https://github.com/matshp0/NestChat
 cd NestChat
-
 ```
 
 ### 2. Environment Variables
