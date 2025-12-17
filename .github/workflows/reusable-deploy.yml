@@ -20,16 +20,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Environment File
-    run: |
-      echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-      echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-      echo "JWT_TTL=${{ vars.JWT_TTL }}" >> .env
-      echo "JWT_REFRESH_TTL=${{ vars.JWT_REFRESH_TTL }}" >> .env
-      echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
-      echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
-      echo "AWS_REGION=${{ vars.AWS_REGION }}" >> .env
-      echo "AWS_AVATAR_BUCKET=${{ vars.AWS_AVATAR_BUCKET }}" >> .env
-      echo "AWS_MEDIA_BUCKET=${{ vars.AWS_MEDIA_BUCKET }}" >> .env
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "JWT_TTL=${{ vars.JWT_TTL }}" >> .env
+          echo "JWT_REFRESH_TTL=${{ vars.JWT_REFRESH_TTL }}" >> .env
+          echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> .env
+          echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> .env
+          echo "AWS_REGION=${{ vars.AWS_REGION }}" >> .env
+          echo "AWS_AVATAR_BUCKET=${{ vars.AWS_AVATAR_BUCKET }}" >> .env
+          echo "AWS_MEDIA_BUCKET=${{ vars.AWS_MEDIA_BUCKET }}" >> .env
 
       - name: Run docker-compose
         run: |
