@@ -1,0 +1,11 @@
+services:
+  api:
+    container_name: nest-api-prod
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env 
