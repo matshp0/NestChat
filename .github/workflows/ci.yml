@@ -35,6 +35,10 @@ jobs:
             turbo-${{ github.ref_name }}-
             turbo-main-
             turbo-
+      - name: Generate Prisma Client
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@localhost:5432/dummy
+        run: npx turbo run generate
 
       - name: Lint
         run: npx turbo lint

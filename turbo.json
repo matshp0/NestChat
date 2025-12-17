@@ -10,6 +10,11 @@
     "lint": {
       "dependsOn": ["^build"]
     },
+    "generate": {
+      "env": ["DATABASE_URL"],
+      "cache": false,
+      "inputs": ["prisma/schema.prisma"]
+    },
     "format": {
       "dependsOn": ["^format"]
     },
