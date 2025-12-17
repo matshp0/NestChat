@@ -1,135 +1,191 @@
-# Turborepo starter
+# 💬 Nest Chat Application
 
-This Turborepo starter is maintained by the Turborepo core team.
+A scalable, high-performance chat application built with a **Monorepo** architecture using **Turborepo**. The system is designed to handle real-time communication, media sharing, and granular role-based access control.
 
-## Using this example
+**⚠️ Current Status:**
 
-Run the following command:
+- ✅ **Backend REST API:** Fully Implemented
+- 🚧 **WebSockets (Notifications):** In Progress (Todo)
+- 📝 **Frontend (Web Client):** Planned (Todo)
 
-```sh
-npx create-turbo@latest
-```
+## 🚀 Live Demo (API)
 
-## What's inside?
+The backend is currently deployed and accessible at:
 
-This Turborepo includes the following packages/apps:
+Base URL: http://51.21.92.39
 
-### Apps and Packages
+_(Note: Since the frontend is not yet built, you can test the endpoints using Postman, Insomnia, or curl)._
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+---
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## 🛠 Tech Stack
 
-### Utilities
+### Core
 
-This Turborepo has some additional tools already setup for you:
+- **Monorepo Tooling:** Turborepo
+- **Package Manager:** pnpm / npm
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### Backend (`apps/backend`)
 
-### Build
+- **Framework:** NestJS
+- **Language:** TypeScript
+- **Database:** PostgreSQL
+- **ORM:** Prisma
+- **Storage:** AWS S3
+- **Validation:** class-validator
 
-To build all apps and packages, run the following command:
+### Infrastructure
 
-```
-cd my-turborepo
+- **Containerization:** Docker & Docker Compose
+- **Reverse Proxy:** Nginx (optional/planned)
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+---
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+## ✨ Key Features (Backend)
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+The backend implements a robust architecture supporting complex chat scenarios:
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+1.  **Advanced RBAC (Role-Based Access Control):**
+    - Roles are not hardcoded enums but dynamic entities linked to specific chats.
+    - Granular permissions system (e.g., `message.text.create`, `message.media.create`, `user.add`).
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+2.  **Media Handling:**
+    - Dedicated `Media` entity separating file metadata (width, height, mimetype) from messages.
+    - Direct integration with S3 for storing images and avatars.
 
-### Develop
+3.  **Chat Types:**
+    - **Direct (Private):** 1-on-1 conversations.
+    - **Group:** Multi-user channels with custom roles.
 
-To develop all apps and packages, run the following command:
+4.  **Message Features:**
+    - Text and Media messages.
+    - Editing history (`isEdited` flags).
+    - Reactions (Unique per user/message).
 
-```
-cd my-turborepo
+---
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+## 🏁 Getting Started
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+### Prerequisites
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+- Docker & Docker Compose
+
+### 1. Clone the repository
+
+Bash
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+git clone https://github.com/matshp0/NestChat
+cd NestChat
 
 ```
-cd my-turborepo
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+### 2. Environment Variables
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+Create a `.env` file in the root or specifically for the backend (depending on your docker config). Ensure you have the following credentials:
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+Code snippet
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/chat_db"
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+# AWS S3 / MinIO
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=us-east-1
+AWS_BUCKET_NAME=chat-media
+
+# Auth
+JWT_SECRET=your_super_secret_jwt_key
+
 ```
 
-## Useful Links
+### 3. Run with Docker
 
-Learn more about the power of Turborepo:
+Use the production compose file to spin up the backend and database.
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+Bash
+
+```
+docker compose -f docker-compose.prod.yml up -d --build
+
+```
+
+The server will start at port `80` .
+
+---
+
+Based on the code provided, here is the updated **API Overview** section for your README.
+
+I have updated the paths to match your Controllers exactly (e.g., registration is now `POST /users` instead of `/auth/register`, and I included the specific RBAC and Media endpoints).
+
+---
+
+## 📡 API Overview
+
+The REST API is built with **NestJS** (using the **Fastify** adapter).
+
+- **Authentication:** Access Tokens (JWT) are returned in the JSON body. Refresh Tokens are handled securely via `HttpOnly` cookies.
+- **Permissions:** Most `/chats` endpoints are protected by a `PermissionGuard`.
+- **File Uploads:** specific endpoints support `multipart/form-data`.
+
+### 🔐 Authentication (`/auth`)
+
+- `POST /auth/login` — Login with credentials. Returns `accessToken` and sets a secure `refresh_token` cookie.
+- `GET /auth/refresh` — Refresh the access token using the HttpOnly cookie.
+
+### 👤 Users (`/users`)
+
+- `GET /users` — Get a list of all users.
+- `POST /users` — **Register** a new user.
+- `GET /users/me` — Get the currently logged-in user's profile.
+- `GET /users/:id` — Get public profile of a specific user.
+- `GET /users/:userId/chats` — Get list of chats the user belongs to.
+- **Avatar Management:**
+  - `POST /users/:id/avatar` — Upload user avatar (Limit: 2MB).
+  - `DELETE /users/:id/avatar` — Delete user avatar.
+
+### 💬 Chats (`/chats`)
+
+**General & Settings**
+
+- `GET /chats` — Get all chats the current user is part of.
+- `POST /chats` — Create a new chat (Group or Direct).
+- `GET /chats/:chatId` — Get specific chat details.
+- `POST /chats/:chatId/avatar` — Upload chat avatar (Limit: 2MB).
+
+**Members & Roles (RBAC)**
+
+- `GET /chats/:chatId/users` — List all users in the chat.
+- `POST /chats/:chatId/users/:userId` — Add a user to the chat.
+- `GET /chats/:chatId/roles` — List available roles in the chat.
+- `POST /chats/:chatId/roles` — Create a new custom role.
+- `PUT /chats/:chatId/users/:userId/roles` — Assign a role to a user.
+
+**Messages inside Chats**
+
+- `GET /chats/:chatId/messages` — Get message history (supports pagination).
+- `POST /chats/:chatId/messages/text` — Send a **text** message.
+- `POST /chats/:chatId/messages/media` — Send a **file/media** message (Limit: 10MB).
+- `PATCH /chats/:chatId/messages/:messageId` — Edit a message.
+- `DELETE /chats/:chatId/messages/:messageId` — Delete a message.
+
+### 📨 Global Messages (`/messages`)
+
+_(Mainly for admin/debugging or specific direct access)_
+
+- `GET /messages` — Retrieve all messages globally.
+- `GET /messages/:id` — Retrieve a specific message by ID.
+
+---
+
+## 🗺 Roadmap
+
+- [x] **Database Design:** ER Diagram and Prisma Schema
+- [x] **Backend Architecture:** NestJS Modules & Shared DTOs
+- [x] **REST API:** CRUD for Users, Chats, and Messages
+- [x] **File Storage:** S3 Integration for Avatars/Media
+- [ ] **WebSockets:** Real-time events (`new_message`, `user_typing`)
+- [ ] **Frontend Application:** Next.js UI implementation
+- [ ] **CI/CD:** Automated testing and deployment pipelines
