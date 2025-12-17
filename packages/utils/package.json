@@ -19,14 +19,17 @@
   },
   "exports": {
     "./request": {
+      "types": "./dist/request/index.d.ts",
       "import": "./dist/request/index.js",
       "require": "./dist/request/index.js"
     },
     "./response": {
+      "types": "./dist/response/index.d.ts",
       "import": "./dist/response/index.js",
       "require": "./dist/response/index.js"
     },
     "./db": {
+      "types": "./dist/db/index.d.ts",
       "import": "./dist/db/index.js",
       "require": "./dist/db/index.js"
     }
