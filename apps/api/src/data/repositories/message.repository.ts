@@ -14,10 +14,16 @@ import { Upload } from '@aws-sdk/lib-storage';
 export type MessageWithUser = Prisma.MessageGetPayload<{
   include: {
     user: {
-      include: {
+      select: {
+        id: true;
+        username: true;
+        displayName: true;
+        avatarUrl: true;
         userChat: {
-          include: {
-            role: true;
+          select: {
+            role: {
+              select: { name: true };
+            };
           };
         };
       };
@@ -113,26 +119,35 @@ export class MessageRepository {
     const condition = timestamp
       ? [{ createdAt: { lt: timestamp } }]
       : undefined;
-    const messages = await this.prismaService.message.findMany({
+
+    return await this.prismaService.message.findMany({
       where: {
         chatId,
         OR: condition,
       },
       include: {
         user: {
-          include: {
+          select: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true,
+
             userChat: {
-              include: {
-                role: true,
+              where: { chatId: chatId },
+              take: 1,
+              select: {
+                role: {
+                  select: { name: true },
+                },
               },
             },
           },
         },
       },
-      orderBy: [{ createdAt: 'desc' }],
+      orderBy: { createdAt: 'desc' },
       take: n,
     });
-    return messages.reverse();
   }
 
   async create(params: Prisma.MessageUncheckedCreateInput) {

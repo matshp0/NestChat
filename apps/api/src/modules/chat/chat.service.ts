@@ -138,7 +138,6 @@ export class ChatService {
       limit,
       timestamp,
     );
-    console.dir(messages, { depth: null });
     return this.messageMapper.toMessage(messages);
   }
 
