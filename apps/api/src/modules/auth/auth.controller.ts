@@ -3,7 +3,8 @@ import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { Public } from 'src/common/decorators/public';
 import { type FastifyReply, type FastifyRequest } from 'fastify';
-import { LoginDto } from '@repo/utils/request';
+import { CreateUserDto, LoginDto } from '@repo/utils/request';
+import { PrivateUserDto } from '@repo/utils/response';
 
 @Controller('/auth')
 export class AuthController {
@@ -30,5 +31,11 @@ export class AuthController {
   @Get('/refresh')
   async refresh(@Req() req: FastifyRequest) {
     return await this.authService.refresh(req.cookies.refresh_token);
+  }
+
+  @Public()
+  @Post('/signup')
+  create(@Body() dto: CreateUserDto): Promise<PrivateUserDto> {
+    return this.authService.createUser(dto);
   }
 }
