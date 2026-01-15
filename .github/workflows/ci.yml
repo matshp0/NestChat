@@ -30,7 +30,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo
-          key: turbo-v2-${{ github.ref_name }}-${{ github.sha }} 
+          key: turbo-v3-${{ github.ref_name }}-${{ github.sha }} 
           restore-keys: |
             turbo-v2-${{ github.ref_name }}-
       - name: Generate Prisma Client
