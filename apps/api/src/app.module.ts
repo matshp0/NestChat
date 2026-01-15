@@ -11,6 +11,7 @@ import { MessageModule } from './modules/message/message.module';
   imports: [
     AuthModule,
     ConfigModule.forRoot({
+      envFilePath: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
       isGlobal: true,
       load: [config],
       validationSchema: configSchema,
