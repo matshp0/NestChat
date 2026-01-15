@@ -4,14 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserRepository } from 'src/data/repositories/user.repository';
-import { hash } from 'bcrypt';
 import { createHash } from 'crypto';
 import { validateAvatar } from 'src/common/helpers/files/validateAvatar';
 import { plainToInstance } from 'class-transformer';
 import { ChatMapper } from 'src/data/mappers/chat.mapper';
 import { type MultipartFile } from '@fastify/multipart';
 import { ChatDto, PrivateUserDto, PublicUserDto } from '@repo/utils/response';
-import { CreateUserDto } from '@repo/utils/request';
 
 @Injectable()
 export class UserService {
@@ -37,21 +35,6 @@ export class UserService {
     const user = await this.userRepository.findById(id);
     if (!user) throw new NotFoundException('User not found');
     return plainToInstance(PublicUserDto, user);
-  }
-
-  async create(dto: CreateUserDto): Promise<PrivateUserDto> {
-    const { email, username, password } = dto;
-    const existingUser = await this.userRepository.findIfExists(
-      email,
-      username,
-    );
-    if (existingUser)
-      throw new BadRequestException(
-        `User with this email or username already exists`,
-      );
-    const passwordHash = await hash(password, 10);
-    const user = this.userRepository.create({ email, passwordHash, username });
-    return plainToInstance(PrivateUserDto, user);
   }
 
   async uploadAvatar(id: number, file: MultipartFile): Promise<PrivateUserDto> {

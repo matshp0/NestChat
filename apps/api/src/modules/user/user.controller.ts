@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -9,13 +8,11 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Public } from 'src/common/decorators/public';
 import { UserId } from 'src/common/decorators/userId';
 import { UploadedFile } from 'src/common/decorators/uploadedFile';
 import { MultipartInterceptor } from 'src/common/interceptors/multipart.interceptor';
 import { type MultipartFile } from '@fastify/multipart';
 import { ChatDto, PrivateUserDto, PublicUserDto } from '@repo/utils/response';
-import { CreateUserDto } from '@repo/utils/request';
 
 @Controller('/users')
 export class UserController {
@@ -34,12 +31,6 @@ export class UserController {
   @Get('/:id')
   findById(@Param('id', ParseIntPipe) id: number): Promise<PublicUserDto> {
     return this.userService.findById(id);
-  }
-
-  @Public()
-  @Post('/')
-  create(@Body() dto: CreateUserDto): Promise<PrivateUserDto> {
-    return this.userService.create(dto);
   }
 
   @Post('/:id/avatar')
