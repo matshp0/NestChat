@@ -6,10 +6,12 @@ import { ChatRepository } from './repositories/chat.repository';
 import { MessageRepository } from './repositories/message.repository';
 import { PermissionRepository } from './repositories/permission.repository';
 import { RoleRepository } from './repositories/role.repository';
+import { KyselyService } from './kysely.provider';
 
 @Module({
   providers: [
     PrismaService,
+    KyselyService,
     S3Service,
     UserRepository,
     ChatRepository,

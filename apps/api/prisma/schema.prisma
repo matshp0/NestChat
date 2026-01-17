@@ -1,6 +1,6 @@
 generator kysely {
-  provider = "prisma-kysely"
-
+  provider     = "prisma-kysely"
+  camelCase    = true
   output       = "../src/data/types"
   fileName     = "types.ts"
   enumFileName = "enums.ts"

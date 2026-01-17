@@ -11,35 +11,35 @@ export type Chat = {
   id: Generated<number>;
   name: string;
   type: ChatType;
-  display_name: string | null;
-  avatar_url: string | null;
-  created_at: Generated<Timestamp>;
-  updated_at: Generated<Timestamp>;
+  displayName: string | null;
+  avatarUrl: string | null;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
 };
 export type Media = {
   id: string;
   mimetype: string;
   height: number | null;
   width: number | null;
-  created_at: Generated<Timestamp>;
-  updated_at: Generated<Timestamp>;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
 };
 export type Message = {
   id: Generated<number>;
-  chat_id: number;
-  user_id: number;
-  is_text: boolean;
-  media_id: string | null;
+  chatId: number;
+  userId: number;
+  isText: boolean;
+  mediaId: string | null;
   content: string | null;
-  is_edited: Generated<boolean | null>;
-  created_at: Generated<Timestamp>;
-  updated_at: Generated<Timestamp>;
+  isEdited: Generated<boolean | null>;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
 };
 export type MessageReaction = {
-  message_id: number;
-  user_id: number;
+  messageId: number;
+  userId: number;
   code: string;
-  created_at: Generated<Timestamp>;
+  createdAt: Generated<Timestamp>;
 };
 export type Permission = {
   id: Generated<number>;
@@ -47,41 +47,41 @@ export type Permission = {
 };
 export type Role = {
   id: Generated<number>;
-  chat_id: number;
+  chatId: number;
   name: string;
-  created_at: Generated<Timestamp>;
-  updated_at: Generated<Timestamp>;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
 };
 export type RolePermission = {
-  role_id: number;
-  permission_id: number;
+  roleId: number;
+  permissionId: number;
 };
 export type User = {
   id: Generated<number>;
   username: string;
-  display_name: string | null;
+  displayName: string | null;
   email: string | null;
-  password_hash: string;
-  avatar_url: string | null;
+  passwordHash: string;
+  avatarUrl: string | null;
   status: Generated<string | null>;
-  created_at: Generated<Timestamp>;
-  updated_at: Generated<Timestamp>;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
 };
 export type UserChat = {
-  chat_id: number;
-  user_id: number;
-  role_id: number | null;
-  created_at: Generated<Timestamp>;
-  updated_at: Generated<Timestamp>;
+  chatId: number;
+  userId: number;
+  roleId: number | null;
+  createdAt: Generated<Timestamp>;
+  updatedAt: Generated<Timestamp>;
 };
 export type DB = {
   chats: Chat;
   media: Media;
-  message_reactions: MessageReaction;
+  messageReactions: MessageReaction;
   messages: Message;
   permissions: Permission;
   roles: Role;
-  roles_permissions: RolePermission;
+  rolesPermissions: RolePermission;
   users: User;
-  users_chats: UserChat;
+  usersChats: UserChat;
 };
