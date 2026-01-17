@@ -28,17 +28,11 @@ export class PermissionGuard implements CanActivate {
     const params = request.params as { chatId: string };
     const chatId = Number(params.chatId);
 
-    const chatUser = await this.userRepository.getChatPermissions(
+    const permissions = await this.userRepository.getChatPermissions(
       chatId,
       userId,
     );
-    if (!chatUser)
-      throw new ForbiddenException('You have no access to this chat');
-
-    const permissions = chatUser?.role?.permissions.map(
-      ({ permission }) => permission.name,
-    );
-    if (!permissions!.includes(requiredPermission))
+    if (!permissions.some(({ name }) => name === requiredPermission))
       throw new ForbiddenException(`Missing permission: ${requiredPermission}`);
 
     return true;

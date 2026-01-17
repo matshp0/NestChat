@@ -59,9 +59,6 @@ export class UserService {
 
   async getChats(userId: number) {
     const chats = await this.userRepository.getUserChats(userId);
-    const mappedChats = chats.map((chat) =>
-      plainToInstance(ChatDto, chat.chat),
-    );
-    return mappedChats;
+    return plainToInstance(ChatDto, chats);
   }
 }

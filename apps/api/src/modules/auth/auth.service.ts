@@ -8,12 +8,13 @@ import { JsonWebTokenError, JwtService, TokenExpiredError } from '@nestjs/jwt';
 import { UserRepository } from 'src/data/repositories/user.repository';
 import { compare, hash } from 'bcrypt';
 import { RefreshToken } from './types/refresh.token';
-import { User } from 'prisma/generated';
+import { User } from 'src/data/types/types';
 import { AccessToken } from './types/accessToken.type';
 import { ConfigService } from '@nestjs/config';
 import { CreateUserDto, LoginDto } from '@repo/utils/request';
 import { PrivateUserDto } from '@repo/utils/response';
 import { plainToInstance } from 'class-transformer';
+import { Selectable } from 'kysely';
 
 @Injectable()
 export class AuthService {
@@ -60,13 +61,13 @@ export class AuthService {
     return { accessToken };
   }
 
-  private async generateRefreshToken(user: User): Promise<string> {
+  private async generateRefreshToken(user: Selectable<User>): Promise<string> {
     const payload: RefreshToken = { sub: user.id, type: 'refresh' };
     const ttl = this.configService.get<number>('jwt.refreshTtl');
     return await this.jwtService.signAsync(payload, { expiresIn: ttl });
   }
 
-  private async generateAccessToken(user: User): Promise<string> {
+  private async generateAccessToken(user: Selectable<User>): Promise<string> {
     const payload: AccessToken = { sub: user.id, type: 'access' };
     const ttl = this.configService.get<number>('jwt.ttl');
     return await this.jwtService.signAsync(payload, { expiresIn: ttl });
