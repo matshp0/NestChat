@@ -40,12 +40,12 @@ export class ChatController {
 
   @Get('/')
   async findAll(): Promise<ChatDto[]> {
-    return await this.chatService.findAll();
+    return this.chatService.findAll();
   }
 
   @Get('/:chatId')
   async findById(@Param('chatId', ParseIntPipe) id: number): Promise<ChatDto> {
-    return await this.chatService.findById(id);
+    return this.chatService.findById(id);
   }
 
   @Post('/')
@@ -53,7 +53,7 @@ export class ChatController {
     @UserId() userId: number,
     @Body() dto: CreateChatDto,
   ): Promise<ChatDto> {
-    return await this.chatService.createChat(userId, dto);
+    return this.chatService.createChat(userId, dto);
   }
 
   @Post('/:chatId/avatar')

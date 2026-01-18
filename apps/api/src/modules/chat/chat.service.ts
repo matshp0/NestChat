@@ -158,7 +158,7 @@ export class ChatService {
       content: dto.content,
       isText: true,
     });
-    return await this.messageMapper.toMessage(message);
+    return this.messageMapper.toMessage(message);
   }
 
   async changeMessage(messageId: number, dto: ChangeMessageDto) {
@@ -170,12 +170,12 @@ export class ChatService {
       isEdited: true,
       content: dto.content,
     });
-    return await this.messageMapper.toMessage(updatedMessage);
+    return this.messageMapper.toMessage(updatedMessage);
   }
 
   async deleteMessage(messageId: number) {
     const deletedMessage = await this.messageRepository.deleteById(messageId);
-    return await this.messageMapper.toMessage(deletedMessage);
+    return this.messageMapper.toMessage(deletedMessage);
   }
 
   async getChatUsers(chatId: number): Promise<ChatUserDto[]> {

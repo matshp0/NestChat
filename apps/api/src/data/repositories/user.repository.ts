@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from 'prisma/generated';
-import { PrismaService } from '../prisma';
 import { S3Service } from '../s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import { KyselyService } from '../kysely.provider';
@@ -16,17 +15,16 @@ export type UserChats = Prisma.UserChatGetPayload<{
 @Injectable()
 export class UserRepository {
   constructor(
-    private readonly prismaService: PrismaService,
     private readonly kyselyService: KyselyService,
     private readonly s3Service: S3Service,
   ) {}
 
   async findAll() {
-    return await this.kyselyService.selectFrom('users').selectAll().execute();
+    return this.kyselyService.selectFrom('users').selectAll().execute();
   }
 
   async findById(id: number) {
-    return await this.kyselyService
+    return this.kyselyService
       .selectFrom('users')
       .selectAll()
       .where('id', '=', id)
@@ -34,7 +32,7 @@ export class UserRepository {
   }
 
   async findIfExists(email: string, username: string) {
-    return await this.kyselyService
+    return this.kyselyService
       .selectFrom('users')
       .where((eb) =>
         eb.or([eb('email', '=', email), eb('username', '=', username)]),
@@ -43,7 +41,7 @@ export class UserRepository {
   }
 
   async findByEmail(email: string) {
-    return await this.kyselyService
+    return this.kyselyService
       .selectFrom('users')
       .selectAll()
       .where('email', '=', email)
@@ -51,7 +49,7 @@ export class UserRepository {
   }
 
   async updateById(id: number, data: Updateable<User>) {
-    return await this.kyselyService
+    return this.kyselyService
       .updateTable('users')
       .set(data)
       .where('id', '=', id)
@@ -60,7 +58,7 @@ export class UserRepository {
   }
 
   async create(data: Insertable<User>) {
-    return await this.kyselyService
+    return this.kyselyService
       .insertInto('users')
       .values(data)
       .returningAll()
@@ -79,7 +77,7 @@ export class UserRepository {
   }
 
   async getChatPermissions(chatId: number, userId: number) {
-    return await this.kyselyService
+    return this.kyselyService
       .selectFrom('usersChats')
       .innerJoin('roles', 'usersChats.roleId', 'roles.id')
       .innerJoin('rolesPermissions', 'roles.id', 'rolesPermissions.roleId')
@@ -95,7 +93,7 @@ export class UserRepository {
   }
 
   async getUserChats(userId: number) {
-    return await this.kyselyService
+    return this.kyselyService
       .selectFrom('usersChats')
       .innerJoin('chats', 'usersChats.chatId', 'chats.id')
       .where('usersChats.userId', '=', userId)

@@ -13,6 +13,6 @@ export class MessageService {
   }
 
   async findById(id: number) {
-    return await this.messageRepository.findById(id);
+    return this.messageRepository.findById(id);
   }
 }

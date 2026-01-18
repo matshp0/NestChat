@@ -30,7 +30,7 @@ export class AuthController {
   @Public()
   @Get('/refresh')
   async refresh(@Req() req: FastifyRequest) {
-    return await this.authService.refresh(req.cookies.refresh_token);
+    return this.authService.refresh(req.cookies.refresh_token);
   }
 
   @Public()

@@ -20,7 +20,7 @@ export class RoleRepository {
     permissions: CHAT_PERMISSIONS[],
     name: string,
   ) {
-    return await this.prismaService.$transaction(async (tx) => {
+    return this.prismaService.$transaction(async (tx) => {
       const role = await tx.role.create({
         data: {
           chatId,
@@ -44,7 +44,7 @@ export class RoleRepository {
 
   async updateUserRole(chatId: number, userId: number, roleId: number) {
     try {
-      return await this.prismaService.userChat.update({
+      return this.prismaService.userChat.update({
         where: {
           userId_chatId: {
             userId,
@@ -74,7 +74,7 @@ export class RoleRepository {
   }
 
   async findByName(chatId: number, name: string) {
-    return await this.prismaService.role.findFirst({
+    return this.prismaService.role.findFirst({
       where: {
         chatId,
         name,
@@ -83,7 +83,7 @@ export class RoleRepository {
   }
 
   async findByChatId(chatId: number) {
-    return await this.prismaService.role.findMany({
+    return this.prismaService.role.findMany({
       where: {
         chatId,
       },

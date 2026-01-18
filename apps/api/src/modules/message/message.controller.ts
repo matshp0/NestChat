@@ -7,11 +7,11 @@ export class MessageController {
 
   @Get('/')
   async findAll() {
-    return await this.messageService.findAll();
+    return this.messageService.findAll();
   }
 
   @Get('/:id')
   async findById(@Param('id', ParseIntPipe) id: number) {
-    return await this.messageService.findById(id);
+    return this.messageService.findById(id);
   }
 }

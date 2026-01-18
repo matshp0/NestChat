@@ -25,7 +25,7 @@ export class ChatRepository {
   ) {}
 
   async findById(id: number) {
-    return await this.prismaService.chat.findUnique({
+    return this.prismaService.chat.findUnique({
       where: {
         id,
       },
@@ -33,12 +33,12 @@ export class ChatRepository {
   }
 
   async findAll() {
-    return await this.prismaService.chat.findMany({});
+    return this.prismaService.chat.findMany({});
   }
 
   async create(params: Prisma.ChatCreateInput) {
     try {
-      return await this.prismaService.chat.create({ data: params });
+      return this.prismaService.chat.create({ data: params });
     } catch (err) {
       if (
         err instanceof Prisma.PrismaClientKnownRequestError &&
@@ -55,7 +55,7 @@ export class ChatRepository {
 
   async updateById(id: number, data: Prisma.ChatUpdateInput) {
     try {
-      return await this.prismaService.chat.update({
+      return this.prismaService.chat.update({
         where: {
           id,
         },
@@ -85,7 +85,7 @@ export class ChatRepository {
 
   async addUser(chatId: number, userId: number, roleId: number | null) {
     try {
-      return await this.prismaService.userChat.create({
+      return this.prismaService.userChat.create({
         data: {
           chatId,
           roleId,
@@ -108,7 +108,7 @@ export class ChatRepository {
   }
 
   async findChatUsers(chatId: number) {
-    return await this.prismaService.userChat.findMany({
+    return this.prismaService.userChat.findMany({
       where: { chatId },
       select: {
         user: true,

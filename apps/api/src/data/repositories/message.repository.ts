@@ -39,7 +39,7 @@ export class MessageRepository {
   ) {}
 
   async findAll() {
-    return await this.prismaService.message.findMany({
+    return this.prismaService.message.findMany({
       include: {
         user: {
           select: {
@@ -54,13 +54,13 @@ export class MessageRepository {
   }
 
   async createMedia(data: Prisma.MediaCreateInput) {
-    return await this.prismaService.media.create({
+    return this.prismaService.media.create({
       data,
     });
   }
 
   async findById(id: number) {
-    return await this.prismaService.message.findUnique({
+    return this.prismaService.message.findUnique({
       where: {
         id,
       },
@@ -68,7 +68,7 @@ export class MessageRepository {
   }
 
   async findByChatId(chatId: number) {
-    return await this.prismaService.message.findMany({
+    return this.prismaService.message.findMany({
       where: { chatId },
       orderBy: { createdAt: 'asc' },
       include: {
@@ -87,7 +87,7 @@ export class MessageRepository {
 
   async updateById(id: number, data: Prisma.MessageUpdateInput) {
     try {
-      return await this.prismaService.message.update({
+      return this.prismaService.message.update({
         where: {
           id,
         },
@@ -120,7 +120,7 @@ export class MessageRepository {
       ? [{ createdAt: { lt: timestamp } }]
       : undefined;
 
-    return await this.prismaService.message.findMany({
+    return this.prismaService.message.findMany({
       where: {
         chatId,
         OR: condition,
@@ -152,7 +152,7 @@ export class MessageRepository {
 
   async create(params: Prisma.MessageUncheckedCreateInput) {
     try {
-      return await this.prismaService.message.create({
+      return this.prismaService.message.create({
         data: params,
         include: {
           user: {

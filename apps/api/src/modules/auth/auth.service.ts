@@ -64,13 +64,13 @@ export class AuthService {
   private async generateRefreshToken(user: Selectable<User>): Promise<string> {
     const payload: RefreshToken = { sub: user.id, type: 'refresh' };
     const ttl = this.configService.get<number>('jwt.refreshTtl');
-    return await this.jwtService.signAsync(payload, { expiresIn: ttl });
+    return this.jwtService.signAsync(payload, { expiresIn: ttl });
   }
 
   private async generateAccessToken(user: Selectable<User>): Promise<string> {
     const payload: AccessToken = { sub: user.id, type: 'access' };
     const ttl = this.configService.get<number>('jwt.ttl');
-    return await this.jwtService.signAsync(payload, { expiresIn: ttl });
+    return this.jwtService.signAsync(payload, { expiresIn: ttl });
   }
 
   private async verifyRefreshToken(token: string) {

@@ -26,13 +26,4 @@ export class S3Service extends S3Client {
   getProfileUrl(key: string) {
     return `https://${this.avatarBucket}.s3.${this.region}.amazonaws.com/${key}`;
   }
-
-  // async putObject(key: string, object: ReadableStream) {
-  //   const command = new PutObjectCommand({
-  //     Bucket: this.bucket,
-  //     Key: key,
-  //     Body: object,
-  //   });
-  //   return await this.client.send(command);
-  // }
 }
