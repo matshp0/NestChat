@@ -119,6 +119,7 @@ model UserChat {
   role Role? @relation(fields: [roleId], references: [id], onDelete: SetNull)
 
   @@id([userId, chatId])
+  @@index([chatId])
   @@map("users_chats")
 }
 
