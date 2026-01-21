@@ -8,7 +8,6 @@ import { validateAvatar } from 'src/common/helpers/files/validateAvatar';
 import { createHash, randomUUID } from 'crypto';
 import { MessageRepository } from 'src/data/repositories/message.repository';
 import { UserRepository } from 'src/data/repositories/user.repository';
-import { MessageMapper } from 'src/data/mappers/message.mapper';
 import { RoleRepository } from 'src/data/repositories/role.repository';
 import { ChatMapper } from 'src/data/mappers/chat.mapper';
 import { RoleMapper } from 'src/data/mappers/role.mapper';
@@ -38,7 +37,6 @@ export class ChatService {
     private readonly chatRepository: ChatRepository,
     private readonly messageRepository: MessageRepository,
     private readonly userRepository: UserRepository,
-    private readonly messageMapper: MessageMapper,
     private readonly roleRepository: RoleRepository,
     private readonly chatMapper: ChatMapper,
     private readonly roleMapper: RoleMapper,
@@ -124,7 +122,7 @@ export class ChatService {
       isText: false,
       mediaId: key,
     });
-    return this.messageMapper.toMessage(message);
+    return plainToInstance(MessageDto, message);
   }
 
   async getMessageFromChat(
@@ -138,7 +136,7 @@ export class ChatService {
       limit,
       timestamp,
     );
-    return this.messageMapper.toMessage(messages);
+    return plainToInstance(MessageDto, messages.reverse());
   }
 
   async createTextMessage(
@@ -158,11 +156,14 @@ export class ChatService {
       content: dto.content,
       isText: true,
     });
-    return this.messageMapper.toMessage(message);
+    return plainToInstance(MessageDto, message);
   }
 
   async changeMessage(messageId: number, dto: ChangeMessageDto) {
-    const message = await this.messageRepository.findById(messageId);
+    const message = await this.messageRepository.findById(messageId, {
+      omitUser: true,
+      omitReactions: true,
+    });
     if (!message) throw new NotFoundException('Message not found');
     if (!message.isText)
       throw new BadRequestException('Cant change media message');
@@ -170,12 +171,13 @@ export class ChatService {
       isEdited: true,
       content: dto.content,
     });
-    return this.messageMapper.toMessage(updatedMessage);
+    return plainToInstance(MessageDto, updatedMessage);
   }
 
   async deleteMessage(messageId: number) {
     const deletedMessage = await this.messageRepository.deleteById(messageId);
-    return this.messageMapper.toMessage(deletedMessage);
+    if (deletedMessage.numDeletedRows === 0n)
+      throw new NotFoundException(`Message with ${messageId} does not exist`);
   }
 
   async getChatUsers(chatId: number): Promise<ChatUserDto[]> {

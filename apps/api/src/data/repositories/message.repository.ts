@@ -1,183 +1,129 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { Prisma } from 'prisma/generated';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma';
 import { S3Service } from '../s3';
 import { GetObjectCommand } from '@aws-sdk/client-s3';
 import { Readable } from 'stream';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Upload } from '@aws-sdk/lib-storage';
+import { KyselyService } from '../kysely.provider';
+import { jsonArrayFrom, jsonObjectFrom } from 'kysely/helpers/postgres';
+import { Insertable, SelectQueryBuilder, Updateable } from 'kysely';
+import { DB, Media, Message } from '../types/types';
 
-export type MessageWithUser = Prisma.MessageGetPayload<{
-  include: {
-    user: {
-      select: {
-        id: true;
-        username: true;
-        displayName: true;
-        avatarUrl: true;
-        userChat: {
-          select: {
-            role: {
-              select: { name: true };
-            };
-          };
-        };
-      };
-    };
-  };
-}>;
+interface MessageSelectParams {
+  omitUser?: boolean;
+  omitReactions?: boolean;
+}
 
 @Injectable()
 export class MessageRepository {
   constructor(
     private readonly prismaService: PrismaService,
+    private readonly kyselyService: KyselyService,
     private readonly s3Service: S3Service,
   ) {}
 
-  async findAll() {
-    return this.prismaService.message.findMany({
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            displayName: true,
-            avatarUrl: true,
-          },
-        },
-      },
-    });
+  private getReactions<O>(qb: SelectQueryBuilder<DB, 'messages', O>) {
+    return qb.select((eb) =>
+      jsonArrayFrom(
+        eb
+          .selectFrom('messageReactions')
+          .selectAll()
+          .whereRef('messageReactions.messageId', '=', 'messages.id'),
+      ).as('reactions'),
+    );
   }
 
-  async createMedia(data: Prisma.MediaCreateInput) {
-    return this.prismaService.media.create({
-      data,
-    });
+  private getUser<O>(qb: SelectQueryBuilder<DB, 'messages', O>) {
+    return qb.select((eb) =>
+      jsonObjectFrom(
+        eb
+          .selectFrom('users')
+          .innerJoin('usersChats', 'usersChats.userId', 'users.id')
+          .innerJoin('roles', 'roles.id', 'usersChats.roleId')
+          .whereRef('users.id', '=', 'messages.userId')
+          .whereRef('usersChats.chatId', '=', 'messages.chatId')
+          .select('roles.name as role')
+          .selectAll('users'),
+      ).as('user'),
+    );
   }
 
-  async findById(id: number) {
-    return this.prismaService.message.findUnique({
-      where: {
-        id,
-      },
-    });
+  findAll(params?: MessageSelectParams) {
+    return this.kyselyService
+      .selectFrom('messages')
+      .selectAll('messages')
+      .$if(!params?.omitUser, (qb) => this.getUser(qb))
+      .$if(!params?.omitReactions, (qb) => this.getReactions(qb))
+      .execute();
   }
 
-  async findByChatId(chatId: number) {
-    return this.prismaService.message.findMany({
-      where: { chatId },
-      orderBy: { createdAt: 'asc' },
-      include: {
-        user: {
-          include: {
-            userChat: {
-              include: {
-                role: true,
-              },
-            },
-          },
-        },
-      },
-    });
+  async createMedia(data: Insertable<Media>) {
+    return this.kyselyService
+      .insertInto('media')
+      .values(data)
+      .returningAll()
+      .executeTakeFirst();
   }
 
-  async updateById(id: number, data: Prisma.MessageUpdateInput) {
-    try {
-      return this.prismaService.message.update({
-        where: {
-          id,
-        },
-        data,
-        include: {
-          user: {
-            include: {
-              userChat: {
-                include: {
-                  role: true,
-                },
-              },
-            },
-          },
-        },
-      });
-    } catch (err) {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === 'P2025'
-      ) {
-        throw new NotFoundException('User not found');
-      }
-      throw err;
-    }
+  async findById(id: number, params?: MessageSelectParams) {
+    return this.kyselyService
+      .selectFrom('messages')
+      .selectAll('messages')
+      .where('messages.id', '=', id)
+      .$if(!params?.omitUser, (qb) => this.getUser(qb))
+      .$if(!params?.omitReactions, (qb) => this.getReactions(qb))
+      .executeTakeFirst();
   }
 
-  async getPaginatedMessages(chatId: number, n: number, timestamp?: Date) {
-    const condition = timestamp
-      ? [{ createdAt: { lt: timestamp } }]
-      : undefined;
-
-    return this.prismaService.message.findMany({
-      where: {
-        chatId,
-        OR: condition,
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            username: true,
-            displayName: true,
-            avatarUrl: true,
-
-            userChat: {
-              where: { chatId: chatId },
-              take: 1,
-              select: {
-                role: {
-                  select: { name: true },
-                },
-              },
-            },
-          },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: n,
-    });
+  async updateById(
+    id: number,
+    data: Updateable<Message>,
+    params?: MessageSelectParams,
+  ) {
+    return this.kyselyService
+      .with('messages', (db) =>
+        db
+          .updateTable('messages')
+          .set(data)
+          .returningAll()
+          .where('messages.id', '=', id),
+      )
+      .selectFrom('messages')
+      .selectAll()
+      .$if(!params?.omitUser, (qb) => this.getUser(qb))
+      .$if(!params?.omitReactions, (qb) => this.getReactions(qb))
+      .executeTakeFirst();
   }
 
-  async create(params: Prisma.MessageUncheckedCreateInput) {
-    try {
-      return this.prismaService.message.create({
-        data: params,
-        include: {
-          user: {
-            include: {
-              userChat: {
-                include: {
-                  role: true,
-                },
-              },
-            },
-          },
-        },
-      });
-    } catch (err) {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === 'P2002'
-      ) {
-        const repeatedField = err.meta?.target as string[];
-        throw new BadRequestException(
-          `User with this ${repeatedField.toString()} already exists`,
-        );
-      }
-      throw err;
-    }
+  async getPaginatedMessages(
+    chatId: number,
+    n: number,
+    timestamp?: Date,
+    params?: MessageSelectParams,
+  ) {
+    return this.kyselyService
+      .selectFrom('messages')
+      .selectAll('messages')
+      .where('chatId', '=', chatId)
+      .$if(!!timestamp, (qb) => qb.where('createdAt', '<', timestamp!))
+      .$if(!params?.omitUser, (qb) => this.getUser(qb))
+      .$if(!params?.omitReactions, (qb) => this.getReactions(qb))
+      .orderBy('createdAt', 'desc')
+      .limit(n)
+      .execute();
+  }
+
+  async create(data: Insertable<Message>, params?: MessageSelectParams) {
+    return this.kyselyService
+      .with('messages', (db) =>
+        db.insertInto('messages').values(data).returningAll(),
+      )
+      .selectFrom('messages')
+      .selectAll()
+      .$if(!params?.omitUser, (qb) => this.getUser(qb))
+      .$if(!params?.omitReactions, (qb) => this.getReactions(qb))
+      .executeTakeFirst();
   }
 
   async uploadMedia(
@@ -199,23 +145,10 @@ export class MessageRepository {
   }
 
   async deleteById(id: number) {
-    const message = await this.prismaService.message.delete({
-      where: {
-        id,
-      },
-      include: {
-        user: {
-          include: {
-            userChat: {
-              include: {
-                role: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    return message;
+    return this.kyselyService
+      .deleteFrom('messages')
+      .where('id', '=', id)
+      .executeTakeFirst();
   }
 
   getPreSignedUrl(key: string) {

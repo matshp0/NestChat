@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Patch,
@@ -100,8 +102,9 @@ export class ChatController {
     return this.chatService.changeMessage(messageId, dto);
   }
 
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete('/:chatId/messages/:messageId')
-  deleteMessage(@Param('messageId') messageId: number): Promise<MessageDto> {
+  deleteMessage(@Param('messageId') messageId: number): Promise<void> {
     return this.chatService.deleteMessage(messageId);
   }
 

@@ -7,8 +7,11 @@ import { MessageDto } from '@repo/utils/response';
 export class MessageService {
   constructor(private readonly messageRepository: MessageRepository) {}
 
-  async findAll(): Promise<MessageDto[]> {
-    const messages = await this.messageRepository.findAll();
+  async findAll() {
+    const messages = await this.messageRepository.findAll({
+      omitReactions: false,
+      omitUser: false,
+    });
     return plainToInstance(MessageDto, messages);
   }
 
